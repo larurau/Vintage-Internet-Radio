@@ -1,12 +1,10 @@
 import datetime
-import os
+import signal
+import sys
 
-from mouseDevice import MouseDevice
-
-# placeholder that simply starts playing
-
-station = 1
-os.system("mpc play " + str(station))
+import outputHandling
+from inputHandling import MouseDevice
+from outputHandling import Channel, FilePlayer
 
 # methods
 
@@ -22,18 +20,37 @@ def calculate_position(change, previous_position, max_value):
 
 # setup
 
+client1 = Channel(
+    500,
+    50,
+    400,
+    "https://cast1.torontocast.com:2170/;.mp3",
+    6600)
+background_noise = FilePlayer(
+    'noise.mp3',
+    6601)
+
 mouse = MouseDevice(1133, 49256)
 
 position = 1000
 position_max_value = 2000
 last_second = datetime.datetime.now().second
+velocity = 0
+
+# signal handling
+
+def signal_handler(sig, frame):
+    print('\nYou pressed Ctrl+C!\n')
+    outputHandling.close_player(client1)
+    outputHandling.close_player(background_noise)
+    mouse.close()
+    sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
 
 # execution
 
 print("\nStarting loop ...")
 while True:
-
-    velocity = mouse.read_movement() / 3
 
     position = calculate_position(velocity, position, position_max_value)
 
@@ -41,8 +58,7 @@ while True:
         print("position: " + str(position))
         last_second = datetime.datetime.now().second
 
-    current_station = 1 if position > 1000 else 2
+    client_volume = client1.set_volume_based_on_position(position)
+    background_noise.set_volume(100-client_volume)
 
-    if current_station != station:
-        station = current_station
-        os.system("mpc play " + str(station))
+    velocity = mouse.read_movement() / 3
