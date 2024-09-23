@@ -32,26 +32,27 @@ def close_player(player):
     player.client.close()
     player.client.disconnect()
 
-class Channel:
+class InternetRadioPlayer:
 
-    def __init__(self, position, perfect_range, perception_range, stream_url, port):
-        self.position = position
-        self.perfect_range = perfect_range
-        self.perception_range = perception_range
-        self.stream_url = stream_url
+    def __init__(self, current_channel_config, port):
+        self.current_channel_config = current_channel_config
         self.port = port
 
         self.client = mpd.MPDClient()
         connect(self)
         self.play_stream()
 
-    def set_volume_based_on_position(self, current_position):
-        distance = abs(current_position - self.position)
+    def set_new_channel_config(self, new_channel_config):
+        self.current_channel_config = new_channel_config
+        self.play_stream()
 
-        if distance <= self.perfect_range:
+    def set_volume_based_on_position(self, current_position):
+        distance = abs(current_position - self.current_channel_config.position)
+
+        if distance <= self.current_channel_config.perfect_range:
             new_volume = 100
-        elif distance <= self.perception_range:
-            new_volume = int(100 * (1 - (distance - self.perfect_range) / (self.perception_range - self.perfect_range)))
+        elif distance <= self.current_channel_config.perception_range:
+            new_volume = int(100 * (1 - (distance - self.current_channel_config.perfect_range) / (self.current_channel_config.perception_range - self.current_channel_config.perfect_range)))
         else:
             new_volume = 0
 
@@ -61,9 +62,9 @@ class Channel:
     def play_stream(self):
         try:
             self.client.clear()
-            self.client.add(self.stream_url)
+            self.client.add(self.current_channel_config.stream_url)
             self.client.play()
-            print(f"Playing {self.stream_url}")
+            print(f"Playing {self.current_channel_config.stream_url}")
         except mpd.CommandError as e:
             print(f"MPD command error: {e}")
 
