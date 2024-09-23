@@ -20,16 +20,16 @@ def calculate_position(change, previous_position, max_value):
     return new_position
 
 def find_closest_channel(current_position, channels):
-    channel = None
+    calculated_channel = None
     min_distance = float('inf')  # Start with a large number
 
     for channel in channels:
         distance = abs(current_position - channel.position)
         if distance < min_distance:
             min_distance = distance
-            channel = channel
+            calculated_channel = channel
 
-    return channel
+    return calculated_channel
 
 # setup
 
