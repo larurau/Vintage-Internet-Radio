@@ -64,7 +64,7 @@ class InternetRadioPlayer:
             self.client.clear()
             self.client.add(self.current_channel_config.stream_url)
             self.client.play()
-            print(f"Playing {self.current_channel_config.stream_url}")
+            print(f"\nPlaying \"{self.current_channel_config.name}\"\n")
         except mpd.CommandError as e:
             print(f"MPD command error: {e}")
 
