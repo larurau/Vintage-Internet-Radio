@@ -1,10 +1,12 @@
 # Mouse device configuration
 MOUSE_VENDOR_ID = 1133
 MOUSE_PRODUCT_ID = 49256
+SPEED_ADJUSTMENT_FACTOR = 0.2
 
 # Initial position settings
-INITIAL_POSITION = 1000
-POSITION_MAX_VALUE = 11400
+INITIAL_POSITION_RANDOM = True
+INITIAL_POSITION = 1000 # gets overwritten if INITIAL_POSITION_RANDOM is True
+POSITION_MAX_VALUE = 12500
 
 # MPD ports
 MPD_PORT_1 = 6600
@@ -52,10 +54,17 @@ CHANNEL_LIST = [
     },
     {
         "position": 6100,
-        "perfect_range": 40,
-        "perception_range": 500,
+        "perfect_range": 60,
+        "perception_range": 300,
         "name": "somafm - Deep Space One",
         "stream_url": "https://ice1.somafm.com/deepspaceone-128-mp3"
+    },
+    {
+        "position": 6550,
+        "perfect_range": 90,
+        "perception_range": 150,
+        "name": "Shirley & Spinoza",
+        "stream_url": "https://s2.radio.co/sec5fa6199/listen"
     },
     {
         "position": 6900,
@@ -107,10 +116,55 @@ CHANNEL_LIST = [
         "stream_url": "https://mediaserv73.live-streams.nl:18058/stream"
     },
     {
-        "position": 10900,
+        "position": 11000,
+        "perfect_range": 40,
+        "perception_range": 440,
+        "name": "Nonstop Casiopea",
+        "stream_url": "https://nonstopcasiopea.radioca.st/;"
+    },
+    {
+        "position": 11800,
+        "perfect_range": 35,
+        "perception_range": 300,
+        "name": "Nordic Lodge Copenhagen",
+        "stream_url": "http://radio.streemlion.com:1160/stream"
+    },
+    {
+        "position": 12250,
         "perfect_range": 20,
         "perception_range": 120,
         "name": "Spinning seal FM",
         "stream_url": "https://stream-153.zeno.fm/9q3ez3k3fchvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiI5cTNlejNrM2ZjaHZ2IiwiaG9zdCI6InN0cmVhbS0xNTMuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6InFYeTZZdEZQU2hDTVN3ampEbUtvM3ciLCJpYXQiOjE3MjcwMTY4MDksImV4cCI6MTcyNzAxNjg2OX0.aeG5_KZQwVg_ImMkX6s-5ly83pua1F-tMMcY0VuDmoM"
-    }
+    },
+
+
+
+    {
+        "position": 12800,
+        "perfect_range": 35,
+        "perception_range": 300,
+        "name": "Deutschlandfunk",
+        "stream_url": "https://d121.rndfnk.com/ard/dlf/01/mp3/128/stream.mp3?cid=01FBPWZ12X2XN8SDSMBZ7X0ZTT&sid=2mWCGxOqJS2HPJnb7UkwMBfc7Ty&token=wphjA721LWy4ikf-vdk9bxj75JvHGdb3j_8HS5ARMio&tvf=fS5MSkxD-BdkMTIxLnJuZGZuay5jb20"
+    },
+    {
+        "position": 13800,
+        "perfect_range": 35,
+        "perception_range": 300,
+        "name": "SWR Kultur (2)",
+        "stream_url": "https://f121.rndfnk.com/ard/swr/swr2/live/mp3/256/stream.mp3?aggregator=web&cid=01FC1X4J91VJW1CVH6588MZEE3&sid=2mWCTENJOjSpFHrtCyXO12GYj5P&token=JlsPrW_sd6CUvvkGSE4RYHJioljaLUU2bUFtr2ZhhsE&tvf=0ZKCLWND-BdmMTIxLnJuZGZuay5jb20"
+    },
+    {
+        "position": 14800,
+        "perfect_range": 35,
+        "perception_range": 300,
+        "name": "Deutschlandfunk Kultur",
+        "stream_url": "https://f121.rndfnk.com/ard/dlf/02/mp3/128/stream.mp3?cid=01FBPXKD7AYM1NKT2H60NVGHEQ&sid=2mWCZEPTLrnvCVr5CXeYuYIZNoa&token=GK3TlHWJEbi6GkJcRW_8IecgHtHwaAC8Akvp1Y3wDQg&tvf=8ICcaG5D-BdmMTIxLnJuZGZuay5jb20"
+    },
+    {
+        "position": 15800,
+        "perfect_range": 35,
+        "perception_range": 300,
+        "name": "WDR 3",
+        "stream_url": "https://d131.rndfnk.com/ard/wdr/wdr3/live/mp3/256/stream.mp3?cid=01FBS0C9GMJJE2D5WXZHFQY7HG&sid=2mWCflOalLM9LXhKf9632QyAynQ&token=RsxqgsulZbSV98AQb66MyDowQSO6A2fgi4ppYtvFEB0&tvf=b0DuiHpD-BdkMTMxLnJuZGZuay5jb20"
+    },
 ]

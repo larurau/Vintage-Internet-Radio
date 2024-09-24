@@ -1,6 +1,7 @@
 import datetime
 import signal
 import sys
+import random
 
 import config
 import outputHandling
@@ -38,6 +39,8 @@ mouse = MouseDevice(config.MOUSE_VENDOR_ID, config.MOUSE_PRODUCT_ID)
 
 position = config.INITIAL_POSITION
 position_max_value = config.POSITION_MAX_VALUE
+if config.INITIAL_POSITION_RANDOM:
+    position = random.randint(0, config.POSITION_MAX_VALUE)
 last_second = datetime.datetime.now().second
 velocity = 0
 
@@ -64,7 +67,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 # execution
 
-print("\nStarting loop ...")
+print(f"\nStarting loop with initial position {position}")
 while True:
 
     position = calculate_position(velocity, position, position_max_value)
@@ -81,4 +84,4 @@ while True:
     channel_volume = channel_player.set_volume_based_on_position(position)
     background_noise.set_volume(100 - channel_volume)
 
-    velocity = mouse.read_movement() / 3
+    velocity = mouse.read_movement() * config.SPEED_ADJUSTMENT_FACTOR
