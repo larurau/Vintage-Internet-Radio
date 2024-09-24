@@ -33,18 +33,40 @@ def find_closest_channel(current_position, channels):
 
     return calculated_channel
 
+def calculate_channel_positions(channels, extra_distance=50):
+
+    initial_position = 0
+    current_position = initial_position
+
+    print(f"\nInitialise channel positions:")
+
+    for index, channel in enumerate(channels):
+
+        # space necessary "below"
+        current_position += channel.perception_range
+
+        channel.position = current_position
+        print(f"Initialised \"{channel.name}\" at position {current_position}")
+
+        # space necessary "above" as well as extra distance
+        current_position += channel.perception_range + extra_distance
+
+    print("Finished calculating channel positions")
+    print(f"Maximum position is {current_position}\n")
+    return channels, current_position
+
 # setup
 
 mouse = MouseDevice(config.MOUSE_VENDOR_ID, config.MOUSE_PRODUCT_ID)
 
+channel_list = [ChannelConfig(**channel) for channel in config.CHANNEL_LIST]
+channel_list, position_max_value = calculate_channel_positions(channel_list)
+
 position = config.INITIAL_POSITION
-position_max_value = config.POSITION_MAX_VALUE
 if config.INITIAL_POSITION_RANDOM:
-    position = random.randint(0, config.POSITION_MAX_VALUE)
+    position = random.randint(0, position_max_value)
 last_second = datetime.datetime.now().second
 velocity = 0
-
-channel_list = [ChannelConfig(**channel) for channel in config.CHANNEL_LIST]
 
 closest_channel = find_closest_channel(position, channel_list)
 
@@ -67,7 +89,9 @@ signal.signal(signal.SIGINT, signal_handler)
 
 # execution
 
-print(f"\nStarting loop with initial position {position}")
+print("\n---------------------------------------------------------------------")
+print(f" Starting loop with initial position {position} and maximum position {position_max_value}")
+print("---------------------------------------------------------------------\n")
 while True:
 
     position = calculate_position(velocity, position, position_max_value)

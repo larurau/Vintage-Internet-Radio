@@ -52,7 +52,13 @@ class InternetRadioPlayer:
         if distance <= self.current_channel_config.perfect_range:
             new_volume = 100
         elif distance <= self.current_channel_config.perception_range:
-            new_volume = int(100 * (1 - (distance - self.current_channel_config.perfect_range) / (self.current_channel_config.perception_range - self.current_channel_config.perfect_range)))
+
+            dividend = distance - self.current_channel_config.perfect_range
+            divisor = self.current_channel_config.perception_range - self.current_channel_config.perfect_range      # so that the volume drop off starts to happen at outside the perfect range
+
+            relative_distance = dividend / divisor
+            new_volume = int(100 * (1 - relative_distance))
+
         else:
             new_volume = 0
 
@@ -64,7 +70,7 @@ class InternetRadioPlayer:
             self.client.clear()
             self.client.add(self.current_channel_config.stream_url)
             self.client.play()
-            print(f"\nPlaying \"{self.current_channel_config.name}\"\n")
+            print(f"Playing station \"{self.current_channel_config.name}\"")
         except mpd.CommandError as e:
             print(f"MPD command error: {e}")
 
@@ -87,6 +93,6 @@ class FilePlayer:
             self.client.add('noise.mp3')
             self.client.repeat(1)
             self.client.play()
-            print(f"Now playing: {self.file_path} on loop")
+            print(f"Playing file \"{self.file_path}\" on loop")
         except mpd.CommandError as e:
             print(f"MPD command error: {e}")

@@ -1,6 +1,6 @@
 class ChannelConfig:
-    def __init__(self, position, perfect_range, perception_range, name, stream_url):
-        self.position = position
+    def __init__(self, perfect_range, perception_range, name, stream_url):
+        self.position = None  # Will be set later dynamically
         self.perfect_range = perfect_range
         self.perception_range = perception_range
         self.name = name
