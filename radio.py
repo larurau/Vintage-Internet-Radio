@@ -38,7 +38,11 @@ def calculate_channel_positions(channels, extra_distance=50):
     initial_position = 0
     current_position = initial_position
 
-    print(f"\nInitialise channel positions:")
+    local_random = random.Random(config.POSITION_CALCULATION_SEED)
+    min_distance = config.INBETWEEN_DISTANCE_MIN
+    max_distance = config.INBETWEEN_DISTANCE_MAX
+
+    print(f"\nInitialise channel positions of {len(channels)} channels:")
 
     for index, channel in enumerate(channels):
 
@@ -49,6 +53,8 @@ def calculate_channel_positions(channels, extra_distance=50):
         print(f"Initialised \"{channel.name}\" at position {current_position}")
 
         # space necessary "above" as well as extra distance
+        extra_distance = local_random.randint(min_distance, max_distance)
+        print(f"Extra distance: {extra_distance}")
         current_position += channel.perception_range + extra_distance
 
     print("Finished calculating channel positions")
