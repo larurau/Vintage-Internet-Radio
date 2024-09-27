@@ -34,7 +34,7 @@ def find_closest_channel(current_position, channels):
 
     return calculated_channel
 
-def calculate_channel_positions(channels, extra_distance=50):
+def calculate_channel_positions(channels):
 
     initial_position = 0
     current_position = initial_position
@@ -63,6 +63,9 @@ def calculate_channel_positions(channels, extra_distance=50):
     return channels, current_position
 
 # setup
+
+led_manager = LedManager()
+led_manager.startup()
 
 mouse = MouseDevice(config.MOUSE_VENDOR_ID, config.MOUSE_PRODUCT_ID)
 
@@ -117,6 +120,7 @@ while True:
 
         channel_volume = channel_player.set_volume_based_on_position(position)
         background_noise.set_volume(100 - channel_volume)
+        led_manager.select_animation(channel_volume)
 
     # From here on the stuff happens that needs to have precise timing
 
