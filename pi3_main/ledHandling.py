@@ -34,13 +34,17 @@ class LedManager:
         self.isPerfect = False
 
     def startup(self):
-        send_command(self.pico, 'green')
+        send_command(self.pico, 'Color(227,87,11)')
         time.sleep(2)
 
     def select_animation(self, volume):
         if volume > 99 and self.isPerfect == False:
-            send_command(self.pico, 'blue')
+            print('Breathing')
+            send_command(self.pico, 'Color(230,196,30)')
+            send_command(self.pico, 'Animation=breathing')
             self.isPerfect = True
         elif volume < 96 and self.isPerfect:
-            send_command(self.pico, 'red')
+            print('Noise')
+            send_command(self.pico, 'Color(209,171,33)')
+            send_command(self.pico, 'Animation=noise')
             self.isPerfect = False
