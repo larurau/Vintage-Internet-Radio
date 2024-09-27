@@ -20,7 +20,7 @@ class MouseDevice:
             usb.util.claim_interface(self.dev, self.interface)
 
     def read_movement(self):
-        while True: 
+
             try:
                 data = self.dev.read(self.endpoint.bEndpointAddress,self.endpoint.wMaxPacketSize)
                 velocity = int(data[2])
@@ -30,8 +30,8 @@ class MouseDevice:
                 return velocity
                 
             except usb.core.USBError as e:
-                if e.args == ('Operation timed out',):
-                    continue
+                return None
+
 
     def close(self):
         # release the device

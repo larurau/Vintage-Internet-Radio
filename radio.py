@@ -7,6 +7,7 @@ import config
 import outputHandling
 from dataManagement import ChannelConfig
 from inputHandling import MouseDevice
+from ledHandling import LedManager
 from outputHandling import InternetRadioPlayer, FilePlayer
 
 # methods
@@ -84,7 +85,6 @@ background_noise = FilePlayer(
     config.MPD_PORT_2)
 
 # signal handling
-
 def signal_handler(_sig, _frame):
     print('\nYou pressed Ctrl+C!\n')
     outputHandling.close_player(channel_player)
@@ -100,18 +100,24 @@ print(f" Starting loop with initial position {position} and maximum position {po
 print("---------------------------------------------------------------------\n")
 while True:
 
-    position = calculate_position(velocity, position, position_max_value)
+    if velocity is not None:
 
-    new_closest_channel = find_closest_channel(position, channel_list)
-    if new_closest_channel != closest_channel:
-        closest_channel = new_closest_channel
-        channel_player.set_new_channel_config(closest_channel)
+        velocity = velocity * config.SPEED_ADJUSTMENT_FACTOR
 
-    if last_second != datetime.datetime.now().second:
-        print("position: " + str(position))
-        last_second = datetime.datetime.now().second
+        position = calculate_position(velocity, position, position_max_value)
 
-    channel_volume = channel_player.set_volume_based_on_position(position)
-    background_noise.set_volume(100 - channel_volume)
+        new_closest_channel = find_closest_channel(position, channel_list)
+        if new_closest_channel != closest_channel:
+            closest_channel = new_closest_channel
+            channel_player.set_new_channel_config(closest_channel)
 
-    velocity = mouse.read_movement() * config.SPEED_ADJUSTMENT_FACTOR
+        if last_second != datetime.datetime.now().second:
+            print("position: " + str(position))
+            last_second = datetime.datetime.now().second
+
+        channel_volume = channel_player.set_volume_based_on_position(position)
+        background_noise.set_volume(100 - channel_volume)
+
+    # From here on the stuff happens that needs to have precise timing
+
+    velocity = mouse.read_movement()

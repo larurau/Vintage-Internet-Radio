@@ -6,6 +6,9 @@ import time
 from rpi_ws281x import PixelStrip, Color
 import config
 
+def create_strip():
+    return PixelStrip(config.LED_COUNT, config.LED_PIN, config.LED_FREQ_HZ, config.LED_DMA, config.LED_INVERT, config.LED_BRIGHTNESS, config.LED_CHANNEL)
+
 # Locking
 
 def check_and_create_lock():
@@ -73,7 +76,7 @@ def red_color_animation(strip, wait_ms=10, iterations=1):
 
     for j in range(256 * iterations):
         for i in range(strip.numPixels()):
-            strip.setPixelColor(i, Color(255, 30, 30))
+            strip.setPixelColor(i, Color(255, 0, 0))
         strip.show()
         time.sleep(wait_ms / 1000.0)
 
@@ -81,7 +84,7 @@ def green_color_animation(strip, wait_ms=10, iterations=1):
 
     for j in range(256 * iterations):
         for i in range(strip.numPixels()):
-            strip.setPixelColor(i, Color(30, 255, 30))
+            strip.setPixelColor(i, Color(0, 255, 0))
         strip.show()
         time.sleep(wait_ms / 1000.0)
 
@@ -89,11 +92,11 @@ def blue_color_animation(strip, wait_ms=10, iterations=1):
 
     for j in range(256 * iterations):
         for i in range(strip.numPixels()):
-            strip.setPixelColor(i, Color(30, 30, 255))
+            strip.setPixelColor(i, Color(0, 0, 255))
         strip.show()
         time.sleep(wait_ms / 1000.0)
 
-def reset_colors(strip, color, wait_ms=50):
+def reset_colors(strip, color=Color(0, 0, 0)):
     for i in range(strip.numPixels()):
         strip.setPixelColor(i, color)
         strip.show()
@@ -118,7 +121,7 @@ def test_radio_effects(strip):
 
 def test_led(test_method):
 
-    pixel_strip = PixelStrip(config.LED_COUNT, config.LED_PIN, config.LED_FREQ_HZ, config.LED_DMA, config.LED_INVERT, config.LED_BRIGHTNESS, config.LED_CHANNEL)
+    pixel_strip = create_strip()
     pixel_strip.begin()
 
     try:
@@ -127,9 +130,11 @@ def test_led(test_method):
                 test_colors(pixel_strip)
             elif test_method == 'radio':
                 test_radio_effects(pixel_strip)
+            elif test_method == 'unlock':
+                remove_lock()
 
     except KeyboardInterrupt:
-        reset_colors(pixel_strip, Color(0, 0, 0), 10)  # Clear LEDs on exit
+        reset_colors(pixel_strip)  # Clear LEDs on exit
 
 if __name__ == "__main__":
 
@@ -137,10 +142,27 @@ if __name__ == "__main__":
         check_and_create_lock()
 
         parser = argparse.ArgumentParser(description='Select which test to run.')
-        parser.add_argument('test', choices=['colors', 'radio'], help='Choose which test to run')
+        parser.add_argument('test', choices=['colors', 'radio', 'unlock'], help='Choose which test to run')
 
         args = parser.parse_args()
 
         test_led(args.test)
     finally:
+        remove_lock()
+
+class LedManager:
+
+    def __init__(self):
+
+        print("Initializing LedManager")
+
+        self.strip = create_strip()
+        check_and_create_lock()
+        self.strip.begin()
+
+    def startup(self):
+        startup_animation(self.strip)
+
+    def shutdown(self):
+        reset_colors(self.strip)
         remove_lock()
