@@ -3,6 +3,17 @@ MOUSE_VENDOR_ID = 1133
 MOUSE_PRODUCT_ID = 49256
 SPEED_ADJUSTMENT_FACTOR = 0.2
 
+# WS2812 LED configuration:
+LED_COUNT = 1
+LED_PIN = 18
+LED_FREQ_HZ = 800000
+LED_DMA = 10
+LED_BRIGHTNESS = 155  # 0 for dark, 255 for bright
+LED_INVERT = False
+LED_CHANNEL = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
+
+LED_LOCKFILE = "/tmp/led_strip.lock"
+
 # Initial position settings
 INITIAL_POSITION_RANDOM = True
 INITIAL_POSITION = 1000 # gets overwritten if INITIAL_POSITION_RANDOM is True
