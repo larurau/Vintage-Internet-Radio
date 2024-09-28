@@ -7,6 +7,18 @@ import re
 import math
 import random
 
+# Helper functions
+
+def wheel(pos):
+    if pos < 85:
+        return (pos * 3, 255 - pos * 3, 0)
+    elif pos < 170:
+        pos -= 85
+        return (255 - pos * 3, 0, pos * 3)
+    else:
+        pos -= 170
+        return (0, pos * 3, 255 - pos * 3)
+
 # Startup
 led_onboard = Pin(25, Pin.OUT)
 led_onboard.on()
@@ -47,6 +59,8 @@ max_noise_intensity = 230
 breathing_phase = 0
 noise_intensity = 0.1
 breathing_speed = 0.01
+rainbow_phase = 0
+rainbow_speed = 1
 
 # Loop indefinitely
 while True:
@@ -134,6 +148,26 @@ while True:
             target_noise_intensity = random.randint(min_noise_intensity, max_noise_intensity)
             difference = target_noise_intensity - current_intensity
             current_intensity = current_intensity + (difference * noise_intensity)
+            
+        # special animations
+        
+        elif current_animation == "special_noise":
+            noise_intensity = 1
+            current_animation = "noise"
+            
+        elif current_animation == "rainbow":
+
+            color = wheel(rainbow_phase & 255)
+            target_red = color[0]
+            target_green = color[1]
+            target_blue = color[2]
+            
+            rainbow_phase += rainbow_speed
+            if rainbow_phase > 256:
+                rainbow_phase = 0
+            
+        # default animation
+        
         else:
             current_intensity = 255
         

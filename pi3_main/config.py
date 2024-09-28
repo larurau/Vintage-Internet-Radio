@@ -52,7 +52,14 @@ CHANNEL_LIST = [
         "perfect_range": 20,
         "perception_range": 100,
         "name": "Noise Radio",
+        "animation": "special_noise",
         "stream_url": "https://a5.asurahosting.com:7640/radio.mp3"
+    },
+    {
+        "perfect_range": 40,
+        "perception_range": 120,
+        "name": "GDS.FM",
+        "stream_url": "https://gdsfm.out.airtime.pro/gdsfm_a"
     },
     {
         "perfect_range": 30,
@@ -76,6 +83,7 @@ CHANNEL_LIST = [
         "perfect_range": 60,
         "perception_range": 300,
         "name": "somafm - Deep Space One",
+        "color": "(13,32,71)",
         "stream_url": "https://ice1.somafm.com/deepspaceone-128-mp3"
     },
     {
@@ -91,6 +99,12 @@ CHANNEL_LIST = [
         "stream_url": "https://cast1.my-control-panel.com/proxy/salsason/stream"
     },
     {
+        "perfect_range": 45,
+        "perception_range": 130,
+        "name": "France Culture",
+        "stream_url": "https://icecast.radiofrance.fr/franceculture-midfi.mp3"
+    },
+    {
         "perfect_range": 80,
         "perception_range": 200,
         "name": "Vintage Obscura Radio",
@@ -101,6 +115,13 @@ CHANNEL_LIST = [
         "perception_range": 300,
         "name": "SWR Kultur (2)",
         "stream_url": "https://f121.rndfnk.com/ard/swr/swr2/live/mp3/256/stream.mp3?aggregator=web&cid=01FC1X4J91VJW1CVH6588MZEE3&sid=2mWCTENJOjSpFHrtCyXO12GYj5P&token=JlsPrW_sd6CUvvkGSE4RYHJioljaLUU2bUFtr2ZhhsE&tvf=0ZKCLWND-BdmMTIxLnJuZGZuay5jb20"
+    },
+    {
+        "perfect_range": 20,
+        "perception_range": 100,
+        "name": "NOAA Weather Radio KIG-86, Columbus, Ohio",
+        "color": "(231,195,235)",
+        "stream_url": "https://radio.weatherusa.net/NWR/KIG86.mp3"
     },
     {
         "perfect_range": 50,
@@ -121,15 +142,10 @@ CHANNEL_LIST = [
         "stream_url": "https://stream.integracionvirtual.com/proxy/capitalsalsa?mp=/stream"
     },
     {
-        "perfect_range": 20,
-        "perception_range": 100,
-        "name": "NOAA Weather Radio KIG-86, Columbus, Ohio",
-        "stream_url": "https://radio.weatherusa.net/NWR/KIG86.mp3"
-    },
-    {
         "perfect_range": 70,
         "perception_range": 400,
         "name": "Arctic Outpost AM1270 -Direct Air Monitor",
+        "color": "(14,46,45)",
         "stream_url": "http://radio.streemlion.com:3710/stream"
     },
     {
@@ -137,6 +153,12 @@ CHANNEL_LIST = [
         "perception_range": 350,
         "name": "somafm - Vaporwaves",
         "stream_url": "https://ice6.somafm.com/vaporwaves-128-mp3"
+    },
+    {
+        "perfect_range": 60,
+        "perception_range": 350,
+        "name": "Bloop, London Radio",
+        "stream_url": "https://radio.canstream.co.uk:8058/live.mp3"
     },
     {
         "perfect_range": 30,
@@ -157,6 +179,12 @@ CHANNEL_LIST = [
         "stream_url": "https://streamer.radio.co/s0635c8b0d/listen"
     },
     {
+        "perfect_range": 50,
+        "perception_range": 150,
+        "name": "Nostalgie - Le Plus Grands Tubes Francais",
+        "stream_url": "https://scdn.nrjaudio.fm/fr/30705/mp3_128.mp3?origine=radiogarden&cdn_path=adswizz_lbs10&adws_out_3&access_token=26d8df4e108c4d0ebae0e07d0d222d82"
+    },
+    {
         "perfect_range": 40,
         "perception_range": 440,
         "name": "Nonstop Casiopea",
@@ -172,6 +200,7 @@ CHANNEL_LIST = [
         "perfect_range": 20,
         "perception_range": 120,
         "name": "Spinning seal FM",
+        "animation" : "rainbow",
         "stream_url": "https://stream-153.zeno.fm/9q3ez3k3fchvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiI5cTNlejNrM2ZjaHZ2IiwiaG9zdCI6InN0cmVhbS0xNTMuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6InFYeTZZdEZQU2hDTVN3ampEbUtvM3ciLCJpYXQiOjE3MjcwMTY4MDksImV4cCI6MTcyNzAxNjg2OX0.aeG5_KZQwVg_ImMkX6s-5ly83pua1F-tMMcY0VuDmoM"
     },
 ]

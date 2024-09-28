@@ -29,7 +29,7 @@ class MouseDevice:
                 
                 return velocity
                 
-            except usb.core.USBError as e:
+            except usb.core.USBError:
                 return None
 
 

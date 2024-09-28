@@ -13,6 +13,7 @@ from outputHandling import InternetRadioPlayer, FilePlayer
 # methods
 
 def calculate_position(change, previous_position, max_value):
+
     new_position = previous_position + change
 
     if new_position > max_value:
@@ -20,7 +21,7 @@ def calculate_position(change, previous_position, max_value):
     elif new_position < 0:
         new_position = max_value + previous_position
 
-    return new_position
+    return int(new_position)
 
 def find_closest_channel(current_position, channels):
     calculated_channel = None
@@ -93,6 +94,7 @@ def signal_handler(_sig, _frame):
     outputHandling.close_player(channel_player)
     outputHandling.close_player(background_noise)
     mouse.close()
+    led_manager.stop()
     sys.exit(0)
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -120,8 +122,6 @@ while True:
 
         channel_volume = channel_player.set_volume_based_on_position(position)
         background_noise.set_volume(100 - channel_volume)
-        led_manager.select_animation(channel_volume)
-
-    # From here on the stuff happens that needs to have precise timing
+        led_manager.select_animation(channel_volume, new_closest_channel)
 
     velocity = mouse.read_movement()
