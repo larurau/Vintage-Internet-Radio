@@ -26,31 +26,37 @@ target_red = 0
 target_green = 0
 target_blue = 0
 
-current_animation = ""
-
 pixels = Neopixel(1, 0, 28, "GRB")
-
 pixels.brightness(200)
 
-# Regex to match "Color(r, g, b)" pattern
+# Regex to match allowed inputs
 color_pattern = re.compile(r"Color\((\d+),\s*(\d+),\s*(\d+)\)")
-# Regex to match "Animation=animation_name" pattern
-animation_pattern = re.compile(r"Animation=(\w+)")
+animation_pattern = re.compile(r'Animation\((\w+)\)')
+noise_intensity_pattern = re.compile(r'NoiseIntensity\((\d+)\)')
+breathing_speed_pattern = re.compile(r'BreathingSpeed\((\d+)\)')
 
-# Breathing animation
+# Animation settings
+current_animation = ""
 current_intensity = 255
 target_breathing_intensity = 0
 target_noise_intensity = 0
 min_intensity = 100
 max_intensity = 200
-max_noise_intensity = 160
+min_noise_intensity = 20
+max_noise_intensity = 230
 breathing_phase = 0
-fade_factor = 0.2
+noise_intensity = 0.1
+breathing_speed = 0.01
 
 # Loop indefinitely
 while True:
+    
+    # Read input
+    
     poll_results = poll_obj.poll(4)
+    
     if poll_results:
+        
         data = sys.stdin.readline().strip()
         
         if data == "red":
@@ -66,17 +72,26 @@ while True:
             target_green = 0
             target_blue = 255
             
-        match = color_pattern.match(data)
-        if match:
-            target_red = int(match.group(1))
-            target_green = int(match.group(2))
-            target_blue = int(match.group(3))
+        color_match = color_pattern.match(data)
+        if color_match:
+            target_red = int(color_match.group(1))
+            target_green = int(color_match.group(2))
+            target_blue = int(color_match.group(3))
             
         match_animation = animation_pattern.match(data)
         if match_animation:
             current_animation = match_animation.group(1)
-            print(f'Current animation is {current_animation}')
             
+        match_noise_intensity = noise_intensity_pattern.match(data)
+        if match_noise_intensity:
+            noise_intensity = int(match_noise_intensity.group(1))/1000
+            
+        match_breathing_speed = breathing_speed_pattern.match(data)
+        if match_breathing_speed:
+            breathing_speed = float(match_breathing_speed.group(1))/1000
+      
+    # Animate
+      
     else:
 
         # adjust color
@@ -99,7 +114,7 @@ while True:
         # breathing animation
         
         target_breathing_intensity = int((math.sin(breathing_phase) + 1) / 2 * (max_intensity - min_intensity) + min_intensity)
-        breathing_phase += 0.01
+        breathing_phase += breathing_speed
         if breathing_phase > 2 * math.pi:
                 breathing_phase = 0
                 
@@ -116,18 +131,19 @@ while True:
         # noise animation
                     
         elif current_animation == "noise":
-            target_noise_intensity = random.randint(min_intensity, max_noise_intensity)
-            current_intensity = int((1 - fade_factor) * current_intensity + fade_factor * target_noise_intensity)
+            target_noise_intensity = random.randint(min_noise_intensity, max_noise_intensity)
+            difference = target_noise_intensity - current_intensity
+            current_intensity = current_intensity + (difference * noise_intensity)
         else:
             current_intensity = 255
-            
+        
+        # set the LED
+        
         new_color = (
             int(current_red * (current_intensity / 255)),
             int(current_green * (current_intensity / 255)),
             int(current_blue * (current_intensity / 255))
         )
-        
-        # set the LED
         
         pixels.set_pixel(0, new_color)
         pixels.show()
