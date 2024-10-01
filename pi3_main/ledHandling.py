@@ -10,7 +10,7 @@ def close_connection(connection):
     if connection.is_open:
         connection.close()
 
-def send_command(pico_con ,command, wait_time=0, debug=False):
+def send_command(pico_con, command, wait_time=0, debug=False):
     pico_con.write(f"{command}\r".encode())
     if debug:
         print(f"Sent color command: {command}")
@@ -45,7 +45,7 @@ class LedManager:
         close_connection(self.pico)
 
     def select_animation(self, volume, channel):
-        if 97 < volume  and self.animationState != "Breathing":
+        if 97 < volume and self.animationState != "Breathing":
 
             if channel.color is None:
                 send_command(self.pico, 'Color(230,196,30)')

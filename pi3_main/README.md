@@ -188,3 +188,68 @@ Pyusb has to be installed
 ```
 sudo pip3 install pyusb
 ```
+
+# Automatic startup
+
+To allow access to the USB devices settings have to be changed
+```
+sudo nano /etc/udev/rules.d/99-usb.rules
+```
+In there add the appropriate rule, for the mouse and pico 
+```
+SUBSYSTEM=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c068", MODE="0666"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="0005", MODE="0666"
+```
+The IDs can be found with
+```
+lsusb
+```
+Reload the rules with
+```
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+## Startup
+Create service file
+```
+sudo nano /etc/systemd/system/radio_project.service
+```
+```
+[Unit]
+Description=Start the radio project on boot
+After=network.target
+
+[Service]
+Type=simple
+User=larurau  # Your username
+WorkingDirectory=/home/larurau/radio_project  # Path to your project folder
+ExecStart=/home/larurau/radio_project/venv/bin/python3 /home/larurau/radio_project/files/radio.py
+Environment=PYTHONUNBUFFERED=1
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+Enable service
+```
+sudo systemctl daemon-reload
+```
+```
+sudo systemctl enable radio_project.service
+```
+
+## Read only file system
+
+Enter the raspberry pi settings with
+```
+sudo raspi-config
+```
+
+Navigate down to "Performance Options" and press enter.
+
+Navigate down to "Overlay File System Enable/disable read-only file system"
+
+Select <Yes> on overlay-file-system and write-protetction.
+
+Reboot the system, it should now be in read only mode. It can be undone the same way.

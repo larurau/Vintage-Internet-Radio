@@ -34,7 +34,7 @@ current_red = 0
 current_green = 0
 current_blue = 0
 
-target_red = 0
+target_red = 20
 target_green = 0
 target_blue = 0
 
