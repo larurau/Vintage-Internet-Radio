@@ -1,12 +1,6 @@
-# Vintage Internet Radio
+# Setup
 
-A Raspberry Pi internet radio in a vintage radio shell, using only two knobs as input.
-
-Based on [pi-radio](https://github.com/blogmywiki/pi-radio/tree/master).
-
-## Setup
-
-### First Steps
+## First Steps
 
 Update Pi
 ```
@@ -33,9 +27,9 @@ Adjust the volume of your sound device by typing
 alsamixer
 ```
 
-### Further Configuration
+## Further Configuration
 
-#### Configure ALSA to support multiple audio inputs
+### Configure ALSA to support multiple audio inputs
 
 To get available devices
 ```
@@ -63,7 +57,7 @@ ctl.!default {
 }
 ```
 
-#### Configure Multiple MPD Instances
+### Configure Multiple MPD Instances
 
 Create and edit the files
 ```
@@ -177,7 +171,7 @@ sudo mkdir /var/run/mpd2
 sudo chown larurau:root /var/run/mpd2
 ```
 
-## Necessary Libraries
+# Necessary Libraries
 
 Confusingly to use 
 ```
