@@ -28,6 +28,12 @@ MPD_PORT_2 = 6601
 # Background noise file
 BACKGROUND_NOISE_FILE = 'noise.mp3'
 
+# Colors
+
+COLOR_PERFECT_SELECT = 'Color(255,180,50)'
+COLOR_NOISE = 'Color(255,194,50)'
+COLOR_STARTUP = 'Color(255,224,50)'
+
 # Channel list configuration
 CHANNEL_LIST = [
     {
@@ -39,8 +45,8 @@ CHANNEL_LIST = [
     {
         "perfect_range": 40,
         "perception_range": 500,
-        "name": "Lofi 24/7",
-        "stream_url": "http://usa9.fastcast4u.com/proxy/jamz?mp=/1"
+        "name": "Hunter FM - LOFI",
+        "stream_url": "https://live.hunter.fm/lofi_high"
     },
     {
         "perfect_range": 30,

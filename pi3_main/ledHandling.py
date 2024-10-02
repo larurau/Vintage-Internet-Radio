@@ -1,6 +1,8 @@
 import time
 import serial
 
+import config
+
 def establish_connection():
     new_pico_connection = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=1)
     new_pico_connection.flush()
@@ -38,7 +40,7 @@ class LedManager:
         self.animationState = ""
 
     def startup(self):
-        send_command(self.pico, 'Color(227,87,11)')
+        send_command(self.pico, config.COLOR_STARTUP)
         time.sleep(2)
 
     def stop(self):
@@ -48,7 +50,7 @@ class LedManager:
         if 97 < volume and self.animationState != "Breathing":
 
             if channel.color is None:
-                send_command(self.pico, 'Color(230,196,30)')
+                send_command(self.pico, config.COLOR_PERFECT_SELECT)
             else:
                 send_command(self.pico, f'Color{channel.color}')
 
@@ -61,42 +63,42 @@ class LedManager:
 
         elif 90 < volume < 97 and self.animationState != "LowNoise":
 
-            send_command(self.pico, 'Color(209,171,33)')
+            send_command(self.pico, config.COLOR_NOISE)
             send_command(self.pico, 'Animation(noise)')
             send_command(self.pico, 'NoiseIntensity(0)')
             self.animationState = "LowNoise"
 
         elif 80 < volume < 90 and self.animationState != "MediumNoise":
 
-            send_command(self.pico, 'Color(209,171,33)')
+            send_command(self.pico, config.COLOR_NOISE)
             send_command(self.pico, 'Animation(noise)')
             send_command(self.pico, 'NoiseIntensity(15)')
             self.animationState = "MediumNoise"
 
         elif 55 < volume < 80 and self.animationState != "Noise":
 
-            send_command(self.pico, 'Color(209,171,33)')
+            send_command(self.pico, config.COLOR_NOISE)
             send_command(self.pico, 'Animation(noise)')
             send_command(self.pico, 'NoiseIntensity(50)')
             self.animationState = "Noise"
 
         elif 40 < volume < 55 and self.animationState != "MediumStrongNoise":
 
-            send_command(self.pico, 'Color(209,171,33)')
+            send_command(self.pico, config.COLOR_NOISE)
             send_command(self.pico, 'Animation(noise)')
             send_command(self.pico, 'NoiseIntensity(100)')
             self.animationState = "MediumStrongNoise"
 
         elif 25 < volume < 40 and self.animationState != "StrongNoise":
 
-            send_command(self.pico, 'Color(209,171,33)')
+            send_command(self.pico, config.COLOR_NOISE)
             send_command(self.pico, 'Animation(noise)')
             send_command(self.pico, 'NoiseIntensity(250)')
             self.animationState = "StrongNoise"
 
         elif volume < 25 and self.animationState != "VeryStrongNoise":
 
-            send_command(self.pico, 'Color(209,171,33)')
+            send_command(self.pico, config.COLOR_NOISE)
             send_command(self.pico, 'Animation(noise)')
             send_command(self.pico, 'NoiseIntensity(600)')
             self.animationState = "VeryStrongNoise"

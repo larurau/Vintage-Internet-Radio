@@ -117,7 +117,6 @@ while True:
             channel_player.set_new_channel_config(closest_channel)
 
         if last_second != datetime.datetime.now().second:
-            print("position: " + str(position))
             last_second = datetime.datetime.now().second
 
         channel_volume = channel_player.set_volume_based_on_position(position)
