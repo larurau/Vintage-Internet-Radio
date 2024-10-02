@@ -45,10 +45,11 @@ CHANNEL_LIST = [
     {
         "perfect_range": 40,
         "perception_range": 500,
-        "name": "Hunter FM - LOFI",
-        "stream_url": "https://live.hunter.fm/lofi_high"
+        "name": "Lofi Girl",
+        "stream_url": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+        "stream_type": "youtube"
     },
-    {
+{
         "perfect_range": 30,
         "perception_range": 600,
         "name": "Jazz Club Bandstand - 1930s 1940s Big Band and Swing",

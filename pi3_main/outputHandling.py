@@ -1,5 +1,6 @@
 import time
 import mpd
+import yt_dlp
 
 def connect(player, address="localhost"):
     try:
@@ -32,7 +33,27 @@ def close_player(player):
     player.client.close()
     player.client.disconnect()
 
-class InternetRadioPlayer:
+def handle_youtube_url(url):
+
+    ydl_opts = {
+        'quiet': True,
+        'no_warnings': True,
+        'format': 'bestaudio',
+        'skip_download': True
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        result = ydl.extract_info(
+            url,
+            download=False
+        )
+        if 'entries' in result:
+            video = result['entries'][0]
+        else:
+            video = result
+        return video['url']
+
+class StationPlayer:
 
     def __init__(self, current_channel_config, port):
         self.current_channel_config = current_channel_config
@@ -40,11 +61,11 @@ class InternetRadioPlayer:
 
         self.client = mpd.MPDClient()
         connect(self)
-        self.play_stream()
+        self.play_channel()
 
     def set_new_channel_config(self, new_channel_config):
         self.current_channel_config = new_channel_config
-        self.play_stream()
+        self.play_channel()
 
     def set_volume_based_on_position(self, current_position):
         distance = abs(current_position - self.current_channel_config.position)
@@ -54,7 +75,7 @@ class InternetRadioPlayer:
         elif distance <= self.current_channel_config.perception_range:
 
             dividend = distance - self.current_channel_config.perfect_range
-            divisor = self.current_channel_config.perception_range - self.current_channel_config.perfect_range      # so that the volume drop off starts to happen at outside the perfect range
+            divisor = self.current_channel_config.perception_range - self.current_channel_config.perfect_range
 
             relative_distance = dividend / divisor
             new_volume = int(100 * (1 - relative_distance))
@@ -65,10 +86,18 @@ class InternetRadioPlayer:
         set_volume_of_player(self, new_volume)
         return new_volume
 
-    def play_stream(self):
+    def play_channel(self):
         try:
             self.client.clear()
-            self.client.add(self.current_channel_config.stream_url)
+
+            if self.current_channel_config.stream_type == 'radio':
+                self.client.add(self.current_channel_config.stream_url)
+            if self.current_channel_config.stream_type == 'youtube':
+                new_url = handle_youtube_url(self.current_channel_config.stream_url)
+                self.current_channel_config.stream_url = new_url
+                self.current_channel_config.stream_type = 'radio'
+                self.client.add(new_url)
+
             self.client.play()
             print(f"Playing station \"{self.current_channel_config.name}\"")
         except mpd.CommandError as e:

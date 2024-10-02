@@ -8,7 +8,7 @@ import outputHandling
 from dataManagement import ChannelConfig
 from inputHandling import MouseDevice
 from ledHandling import LedManager
-from outputHandling import InternetRadioPlayer, FilePlayer
+from outputHandling import StationPlayer, FilePlayer
 
 # methods
 
@@ -81,7 +81,7 @@ velocity = 0
 
 closest_channel = find_closest_channel(position, channel_list)
 
-channel_player = InternetRadioPlayer(
+channel_player = StationPlayer(
     closest_channel,
     config.MPD_PORT_1)
 background_noise = FilePlayer(
