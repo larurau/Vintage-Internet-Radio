@@ -41,7 +41,6 @@ class LedManager:
 
     def startup(self):
         send_command(self.pico, config.COLOR_STARTUP)
-        time.sleep(2)
 
     def stop(self):
         close_connection(self.pico)

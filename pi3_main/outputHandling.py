@@ -1,6 +1,5 @@
 import time
 import mpd
-import yt_dlp
 
 def connect(player, address="localhost"):
     try:
@@ -32,26 +31,6 @@ def set_volume_of_player(player, volume):
 def close_player(player):
     player.client.close()
     player.client.disconnect()
-
-def handle_youtube_url(url):
-
-    ydl_opts = {
-        'quiet': True,
-        'no_warnings': True,
-        'format': 'bestaudio',
-        'skip_download': True
-    }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        result = ydl.extract_info(
-            url,
-            download=False
-        )
-        if 'entries' in result:
-            video = result['entries'][0]
-        else:
-            video = result
-        return video['url']
 
 class StationPlayer:
 
@@ -93,10 +72,8 @@ class StationPlayer:
             if self.current_channel_config.stream_type == 'radio':
                 self.client.add(self.current_channel_config.stream_url)
             if self.current_channel_config.stream_type == 'youtube':
-                new_url = handle_youtube_url(self.current_channel_config.stream_url)
-                self.current_channel_config.stream_url = new_url
-                self.current_channel_config.stream_type = 'radio'
-                self.client.add(new_url)
+                self.current_channel_config.preprocess()
+                self.client.add(self.current_channel_config.stream_url)
 
             self.client.play()
             print(f"Playing station \"{self.current_channel_config.name}\"")

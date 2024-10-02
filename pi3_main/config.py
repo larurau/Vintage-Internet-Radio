@@ -49,7 +49,7 @@ CHANNEL_LIST = [
         "stream_url": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
         "stream_type": "youtube"
     },
-{
+    {
         "perfect_range": 30,
         "perception_range": 600,
         "name": "Jazz Club Bandstand - 1930s 1940s Big Band and Swing",
