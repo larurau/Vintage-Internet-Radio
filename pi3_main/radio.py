@@ -90,7 +90,7 @@ def main():
 
     mouse_future = executor.submit(MouseDevice, config.MOUSE_VENDOR_ID, config.MOUSE_PRODUCT_ID)
     channel_player_future = executor.submit(StationPlayer, closest_channel, config.MPD_PORT_1)
-    background_noise_future = executor.submit(FilePlayer, 'noise.mp3', config.MPD_PORT_2)
+    background_noise_future = executor.submit(FilePlayer, config.BACKGROUND_NOISE_FILE, config.MPD_PORT_2)
 
     mouse = mouse_future.result()
     channel_player = channel_player_future.result()

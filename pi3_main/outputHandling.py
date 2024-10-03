@@ -40,6 +40,11 @@ class StationPlayer:
 
         self.client = mpd.MPDClient()
         connect(self)
+
+        # update directory of available files
+        self.client.update()
+        self.client.idle("update")
+
         self.play_channel()
 
     def set_new_channel_config(self, new_channel_config):
@@ -71,8 +76,10 @@ class StationPlayer:
 
             if self.current_channel_config.stream_type == 'radio':
                 self.client.add(self.current_channel_config.stream_url)
-            if self.current_channel_config.stream_type == 'youtube':
+            elif self.current_channel_config.stream_type == 'youtube':
                 self.current_channel_config.preprocess()
+                self.client.add(self.current_channel_config.stream_url)
+            elif self.current_channel_config.stream_type == 'file':
                 self.client.add(self.current_channel_config.stream_url)
 
             self.client.play()
@@ -88,6 +95,11 @@ class FilePlayer:
 
         self.client = mpd.MPDClient()
         connect(self)
+
+        # update directory of available files
+        self.client.update()
+        self.client.idle("update")
+
         self.play_file()
 
     def set_volume(self, current_position):
@@ -96,9 +108,10 @@ class FilePlayer:
     def play_file(self):
         try:
             self.client.clear()
-            self.client.add('noise.mp3')
+            self.client.add(self.file_path)
             self.client.repeat(1)
             self.client.play()
             print(f"Playing file \"{self.file_path}\" on loop")
+
         except mpd.CommandError as e:
             print(f"MPD command error: {e}")

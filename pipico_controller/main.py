@@ -18,6 +18,16 @@ def wheel(pos):
     else:
         pos -= 170
         return (0, pos * 3, 255 - pos * 3)
+    
+def fire_color(min, max):
+    flicker_brightness = random.randint(min, max)
+    orange_modifier = random.uniform(0.1, 0.5)
+    
+    red = flicker_brightness
+    green = int(flicker_brightness * orange_modifier)
+    blue = 0
+    
+    return red, green, blue
 
 # Startup
 led_onboard = Pin(25, Pin.OUT)
@@ -50,17 +60,28 @@ breathing_speed_pattern = re.compile(r'BreathingSpeed\((\d+)\)')
 # Animation settings
 current_animation = ""
 current_intensity = 255
-target_breathing_intensity = 0
-target_noise_intensity = 0
+
 min_intensity = 100
 max_intensity = 200
+
 min_noise_intensity = 20
 max_noise_intensity = 230
-breathing_phase = 0
 noise_intensity = 0.1
+target_noise_intensity = 0
+
+breathing_phase = 0
 breathing_speed = 0.01
+target_breathing_intensity = 0
+
 rainbow_phase = 0
 rainbow_speed = 1
+
+fire_phase = 0
+fire_speed = 5
+
+current_adjustment = 1
+default_adjustment = 1
+fire_adjustment = 3
 
 # Loop indefinitely
 while True:
@@ -110,20 +131,22 @@ while True:
 
         # adjust color
 
-        if current_red < target_red:
-            current_red += 1
-        elif current_red > target_red:
-            current_red -= 1
-            
-        if current_green < target_green:
-            current_green += 1
-        elif current_green > target_green:
-            current_green -= 1
-            
-        if current_blue < target_blue:
-            current_blue += 1
-        elif current_blue > target_blue:
-            current_blue -= 1
+        for _ in range(current_adjustment):
+            if current_red < target_red:
+                current_red += 1
+            elif current_red > target_red:
+                current_red -= 1
+                
+            if current_green < target_green:
+                current_green += 1
+            elif current_green > target_green:
+                current_green -= 1
+                
+            if current_blue < target_blue:
+                current_blue += 1
+            elif current_blue > target_blue:
+                current_blue -= 1
+        current_adjustment = default_adjustment
             
         # breathing animation
         
@@ -157,6 +180,7 @@ while True:
             
         elif current_animation == "rainbow":
 
+            current_intensity = 200
             color = wheel(rainbow_phase & 255)
             target_red = color[0]
             target_green = color[1]
@@ -165,6 +189,19 @@ while True:
             rainbow_phase += rainbow_speed
             if rainbow_phase > 256:
                 rainbow_phase = 0
+                
+        elif current_animation == "fire":
+
+            current_intensity = 255
+            current_adjustment = fire_adjustment
+            if fire_phase == 0:
+                color = fire_color(min_intensity, max_intensity)
+                target_red = color[0]
+                target_green = color[1]
+                target_blue = color[2]
+                fire_phase = fire_speed
+            else:
+                fire_phase -= 1
             
         # default animation
         

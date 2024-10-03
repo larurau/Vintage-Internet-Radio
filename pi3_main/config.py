@@ -3,17 +3,6 @@ MOUSE_VENDOR_ID = 1133
 MOUSE_PRODUCT_ID = 49256
 SPEED_ADJUSTMENT_FACTOR = 0.2
 
-# WS2812 LED configuration:
-LED_COUNT = 1
-LED_PIN = 18
-LED_FREQ_HZ = 800000
-LED_DMA = 10
-LED_BRIGHTNESS = 155  # 0 for dark, 255 for bright
-LED_INVERT = False
-LED_CHANNEL = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
-
-LED_LOCKFILE = "/tmp/led_strip.lock"
-
 # Initial position settings
 INITIAL_POSITION_RANDOM = True
 INITIAL_POSITION = 1000 # gets overwritten if INITIAL_POSITION_RANDOM is True
@@ -69,6 +58,13 @@ CHANNEL_LIST = [
         "stream_url": "https://gdsfm.out.airtime.pro/gdsfm_a"
     },
     {
+        "perfect_range": 40,
+        "perception_range": 350,
+        "name": "Snake Jazz",
+        "stream_url": "SnakeJazz.mp3",
+        "stream_type": "file"
+    },
+    {
         "perfect_range": 30,
         "perception_range": 300,
         "name": "ChillHop",
@@ -98,6 +94,13 @@ CHANNEL_LIST = [
         "perception_range": 150,
         "name": "Shirley & Spinoza",
         "stream_url": "https://s2.radio.co/sec5fa6199/listen"
+    },
+    {
+        "perfect_range": 35,
+        "perception_range": 300,
+        "name": "EVA Entry Plug",
+        "stream_url": "EvaEntryPlug.mp3",
+        "stream_type": "file",
     },
     {
         "perfect_range": 70,
@@ -131,10 +134,24 @@ CHANNEL_LIST = [
         "stream_url": "https://radio.weatherusa.net/NWR/KIG86.mp3"
     },
     {
+        "perfect_range": 40,
+        "perception_range": 400,
+        "name": "Rain",
+        "stream_url": "Rain.mp3",
+        "stream_type": "file",
+    },
+    {
         "perfect_range": 50,
         "perception_range": 400,
         "name": "Retro PC Game Music Streaming Radio for Gyusyabu",
         "stream_url": "http://gyusyabu.ddo.jp:8000/;stream.mp3"
+    },
+    {
+        "perfect_range": 50,
+        "perception_range": 200,
+        "name": "Earth Radio",
+        "stream_url": "humanMusic.mp3",
+        "stream_type": "file",
     },
     {
         "perfect_range": 100,
@@ -168,6 +185,14 @@ CHANNEL_LIST = [
         "stream_url": "https://radio.canstream.co.uk:8058/live.mp3"
     },
     {
+        "perfect_range": 50,
+        "perception_range": 500,
+        "name": "Fireplace",
+        "stream_url": "fireplace.mp3",
+        "stream_type": "file",
+        "animation": "fire",
+    },
+    {
         "perfect_range": 30,
         "perception_range": 240,
         "name": "Ancient FM",
@@ -190,6 +215,13 @@ CHANNEL_LIST = [
         "perception_range": 150,
         "name": "Nostalgie - Le Plus Grands Tubes Francais",
         "stream_url": "https://scdn.nrjaudio.fm/fr/30705/mp3_128.mp3?origine=radiogarden&cdn_path=adswizz_lbs10&adws_out_3&access_token=26d8df4e108c4d0ebae0e07d0d222d82"
+    },
+    {
+        "perfect_range": 45,
+        "perception_range": 350,
+        "name": "Desert",
+        "stream_url": "DesertShortened.mp3",
+        "stream_type": "file",
     },
     {
         "perfect_range": 40,
