@@ -1,11 +1,11 @@
 import os
 
-from pydub import AudioSegment, effects
+from pydub import AudioSegment
 import numpy
 from scipy.signal import butter, lfilter
 from pydub.generators import WhiteNoise, Sine, Square
 
-def apply_radio_eq(audio, low_cut=200, high_cut=4000):
+def __apply_radio_eq(audio, low_cut=200, high_cut=4000):
     order = 5
     audio = audio.set_channels(1)
     nyquist = 0.5 * audio.frame_rate
@@ -16,24 +16,13 @@ def apply_radio_eq(audio, low_cut=200, high_cut=4000):
     filtered_audio = lfilter(b, a, audio.get_array_of_samples())
     return audio._spawn(filtered_audio.astype(numpy.int16))
 
-def apply_compression(audio, threshold=-20.0, ratio=2.0, attack=5, release=50, knee=2.0):
-    compressed_audio = effects.compress_dynamic_range(
-        audio,
-        threshold=threshold,
-        ratio=ratio,
-        attack=attack,
-        release=release
-    )
-    if knee > 0:
-        compressed_audio = effects.normalize(compressed_audio)
-    return compressed_audio
-
-def apply_low_bit_depth(audio, bit_depth=8, sample_rate=10000):
+def __apply_low_bit_depth(audio, bit_depth=8, sample_rate=10000):
     processed_audio = audio.set_sample_width(bit_depth // 8)
     processed_audio = processed_audio.set_frame_rate(sample_rate)
     return processed_audio
 
-def add_radio_noise(audio, base_noise_level=-19.0, harmonic_noise_level=-29.0, white_noise_level=-70.0, base_freq=50, harmonic_freq=50):
+def __add_radio_noise(audio, base_noise_level=-19.0, harmonic_noise_level=-29.0, white_noise_level=-70.0, base_freq=50,
+                      harmonic_freq=50):
 
     duration_ms = len(audio)
 
@@ -50,11 +39,14 @@ def add_radio_noise(audio, base_noise_level=-19.0, harmonic_noise_level=-29.0, w
     return noisy_audio
 
 def audio_effect(file_path):
+
     audio = AudioSegment.from_mp3(file_path)
-    audio = apply_radio_eq(audio)
-    audio = apply_compression(audio)
-    audio = apply_low_bit_depth(audio)
-    audio = add_radio_noise(audio)
+    print("Apply eq ...")
+    audio = __apply_radio_eq(audio)
+    print("Apply bit depth ...")
+    audio = __apply_low_bit_depth(audio)
+    print("Apply noise ...")
+    audio = __add_radio_noise(audio)
 
     # Export processed audio with effects
     current_directory = os.getcwd()

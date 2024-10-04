@@ -3,7 +3,11 @@ import datetime
 import json
 import subprocess
 import os
+import time
+
 import edge_tts
+
+from audioAdjustment import audio_effect
 
 TEMP_HIGH_WARNING = 35
 TEMP_LOW_WARNING = 0
@@ -18,58 +22,9 @@ SNOW_WARNING = 2.5
 EXTREME_PRECIP_WARNING = 20
 EXTREME_SNOW_WARNING = 7.5
 
-# Helper
-
-def weather_code_to_text(code):
-    # WMO Weather Interpretation Codes
-    weather_code_dict = {
-        0: "Clear sky",
-        1: "Mainly clear",
-        2: "Partly cloudy",
-        3: "Overcast",
-        45: "Fog",
-        48: "Depositing rime fog",
-        51: "Drizzle of Light intensity",
-        53: "Drizzle of Moderate intensity",
-        55: "Drizzle of Dense intensity",
-        56: "Freezing Drizzle of Light intensity",
-        57: "Freezing Drizzle of Dense intensity",
-        61: "Rain of Slight intensity",
-        63: "Rain of Moderate intensity",
-        65: "Rain of Heavy intensity",
-        66: "Freezing Rain of Light intensity",
-        67: "Freezing Rain of Heavy intensity",
-        71: "Snow fall of Slight intensity",
-        73: "Snow fall of Moderate intensity",
-        75: "Snow fall of Heavy intensity",
-        77: "Snow grains",
-        80: "Rain showers of Slight intensity",
-        81: "Rain showers of Moderate intensity",
-        82: "Rain showers of Violent intensity",
-        85: "Snow showers of Slight intensity",
-        86: "Snow showers of Heavy intensity",
-        95: "Thunderstorm of Slight or moderate",
-        96: "Thunderstorm with slight hail",
-        99: "Thunderstorm with heavy hail"
-    }
-    error_message = f"Error: Invalid weather code {code}, does not match any known weather."
-    return weather_code_dict.get(code, )
-
-def degrees_to_cardinal(degree):
-    if degree is None:
-        return "unknown direction"
-
-    directions = ['North', 'North-Northeast', 'Northeast', 'East-Northeast', 'East',
-                  'East-Southeast', 'Southeast', 'South-Southeast', 'South',
-                  'South-Southwest', 'Southwest', 'West-Southwest', 'West',
-                  'West-Northwest', 'Northwest', 'North-Northwest']
-
-    index = round(degree / 22.5) % 16
-    return directions[index]
-
 # Main
 
-def get_weather(lat, long):
+def __get_weather(lat, long):
 
     lat_long = f"?latitude={lat}&longitude={long}"
     current = ("&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,"
@@ -99,8 +54,8 @@ def get_weather(lat, long):
         print("Error with curl request")
         return None
 
-def weather_info_to_text(data, location_name):
-    def generate_sun_text(sun_rise, sun_set):
+def __weather_info_to_text(data, location_name):
+    def __generate_sun_text(sun_rise, sun_set):
 
         sunrise_time = datetime.datetime.fromisoformat(sun_rise)
         sunset_time = datetime.datetime.fromisoformat(sun_set)
@@ -127,8 +82,52 @@ def weather_info_to_text(data, location_name):
         # Combine the sunrise and sunset text
         return f"{sunrise_text}\n{sunset_text}"
 
-    ##########################################################
-    ####################### current ##########################
+    def __weather_code_to_text(code):
+        # WMO Weather Interpretation Codes
+        weather_code_dict = {
+            0: "Clear sky",
+            1: "Mainly clear",
+            2: "Partly cloudy",
+            3: "Overcast",
+            45: "Fog",
+            48: "Depositing rime fog",
+            51: "Drizzle of Light intensity",
+            53: "Drizzle of Moderate intensity",
+            55: "Drizzle of Dense intensity",
+            56: "Freezing Drizzle of Light intensity",
+            57: "Freezing Drizzle of Dense intensity",
+            61: "Rain of Slight intensity",
+            63: "Rain of Moderate intensity",
+            65: "Rain of Heavy intensity",
+            66: "Freezing Rain of Light intensity",
+            67: "Freezing Rain of Heavy intensity",
+            71: "Snow fall of Slight intensity",
+            73: "Snow fall of Moderate intensity",
+            75: "Snow fall of Heavy intensity",
+            77: "Snow grains",
+            80: "Rain showers of Slight intensity",
+            81: "Rain showers of Moderate intensity",
+            82: "Rain showers of Violent intensity",
+            85: "Snow showers of Slight intensity",
+            86: "Snow showers of Heavy intensity",
+            95: "Thunderstorm of Slight or moderate",
+            96: "Thunderstorm with slight hail",
+            99: "Thunderstorm with heavy hail"
+        }
+        error_message = f"Error: Invalid weather code {code}, does not match any known weather."
+        return weather_code_dict.get(code, error_message)
+
+    def __degrees_to_cardinal(degree):
+        if degree is None:
+            return "unknown direction"
+
+        directions = ['North', 'North-Northeast', 'Northeast', 'East-Northeast', 'East',
+                      'East-Southeast', 'Southeast', 'South-Southeast', 'South',
+                      'South-Southwest', 'Southwest', 'West-Southwest', 'West',
+                      'West-Northwest', 'Northwest', 'North-Northwest']
+
+        index = round(degree / 22.5) % 16
+        return directions[index]
 
     # Extract current weather information
     current_weather = data['current']
@@ -143,25 +142,21 @@ def weather_info_to_text(data, location_name):
     current_wind_direction_10m = current_weather['wind_direction_10m']
 
     # Current weather text
-    text_lines = []
-    text_lines.append(f"Current conditions in {location_name}:")
+    text_lines = [f"Current conditions in {location_name}:"]
     day_night_value = "Daytime" if current_is_day == 1 else "Nighttime"
     text_lines.append(f"It is currently {day_night_value}.")
-    text_lines.append(f"The weather is {weather_code_to_text(current_weather_code)}.")
+    text_lines.append(f"The weather is {__weather_code_to_text(current_weather_code)}.")
     if (current_temperature_2m > TEMP_HIGH_WARNING or current_temperature_2m < TEMP_LOW_WARNING
             or current_apparent_temperature > TEMP_HIGH_WARNING or current_apparent_temperature < TEMP_LOW_WARNING):
         text_lines.append(f"Warning: ")
     text_lines.append((f"The temperature is {int(current_temperature_2m)} degrees, and feels like "
-             f"{int(current_apparent_temperature)} degrees."))
+                       f"{int(current_apparent_temperature)} degrees."))
     text_lines.append(f"The relative humidity is at {int(current_relative_humidity_2m)} %.")
     if current_wind_speed_10m > WIND_SPEED_WARNING or current_wind_gusts_10m > WIND_GUSTS_WARNING:
         text_lines.append(f"Warning: ")
     text_lines.append(f"The wind speed is currently {int(current_wind_speed_10m)} km/h "
-             f"coming from {degrees_to_cardinal(current_wind_direction_10m)}, "
-             f"with gusts of up to {int(current_wind_gusts_10m)} km/h. \n")
-
-    ##########################################################
-    ####################### today ##########################
+                      f"coming from {__degrees_to_cardinal(current_wind_direction_10m)}, "
+                      f"with gusts of up to {int(current_wind_gusts_10m)} km/h. \n")
 
     # Extract daily weather information
     daily_weather = data['daily']
@@ -183,9 +178,9 @@ def weather_info_to_text(data, location_name):
     daily_wind_direction_10m_dominant = daily_weather['wind_direction_10m_dominant']
 
     text_lines.append(f"Today's Weather forecast for {location_name}:")
-    text_lines.append(f"The weather will be {weather_code_to_text(daily_weather_code[0])}.")
+    text_lines.append(f"The weather will be {__weather_code_to_text(daily_weather_code[0])}.")
 
-    text_lines.append(generate_sun_text(daily_sunrise[0], daily_sunset[0]))
+    text_lines.append(__generate_sun_text(daily_sunrise[0], daily_sunset[0]))
 
     text_lines.append((f"Today has {int(daily_daylight_duration[0] / 60 / 60)} hours of daylight with "
                        f"{int(daily_sunshine_duration[0] / 60 / 60)} hours of sunshine."))
@@ -213,7 +208,7 @@ def weather_info_to_text(data, location_name):
     if daily_wind_speed_10m_max[0] > WIND_SPEED_WARNING or daily_wind_gusts_10m_max[0] > WIND_GUSTS_WARNING:
         text_lines.append(f"Warning: ")
     text_lines.append(f"The wind speed will be up to {int(daily_wind_speed_10m_max[0])} km/h"
-                      f" coming dominantly from {degrees_to_cardinal(daily_wind_direction_10m_dominant[0])}, "
+                      f" coming dominantly from {__degrees_to_cardinal(daily_wind_direction_10m_dominant[0])}, "
                       f"with gusts of up to {int(daily_wind_gusts_10m_max[0])} km/h.")
 
     if daily_precipitation_sum[0] > 0:
@@ -232,14 +227,11 @@ def weather_info_to_text(data, location_name):
         text_lines.append(f"The total snowfall is expected to be {daily_snowfall_sum[0]} mm.")
     text_lines.append("")
 
-    ##########################################################
-    ###################### tomorrow ##########################
-
     text_lines.append(f"Tomorrow's Weather forecast for {location_name}:")
-    text_lines.append(f"The weather will be {weather_code_to_text(daily_weather_code[1])}.")
+    text_lines.append(f"The weather will be {__weather_code_to_text(daily_weather_code[1])}.")
 
     # Use the sunrise and sunset for tomorrow (index 1)
-    text_lines.append(generate_sun_text(daily_sunrise[1], daily_sunset[1]))
+    text_lines.append(__generate_sun_text(daily_sunrise[1], daily_sunset[1]))
 
     text_lines.append((f"Tomorrow will have {int(daily_daylight_duration[1] / 60 / 60)} hours of daylight with "
                        f"{int(daily_sunshine_duration[1] / 60 / 60)} hours of sunshine."))
@@ -270,7 +262,7 @@ def weather_info_to_text(data, location_name):
     if daily_wind_speed_10m_max[1] > WIND_SPEED_WARNING or daily_wind_gusts_10m_max[1] > WIND_GUSTS_WARNING:
         text_lines.append(f"Warning: ")
     text_lines.append(f"The wind speed will be up to {int(daily_wind_speed_10m_max[1])} km/h"
-                      f" coming dominantly from {degrees_to_cardinal(daily_wind_direction_10m_dominant[1])}, "
+                      f" coming dominantly from {__degrees_to_cardinal(daily_wind_direction_10m_dominant[1])}, "
                       f"with gusts of up to {int(daily_wind_gusts_10m_max[1])} km/h.")
 
     # Precipitation warnings for tomorrow
@@ -290,30 +282,21 @@ def weather_info_to_text(data, location_name):
         text_lines.append(f"The total snowfall is expected to be {daily_snowfall_sum[1]} mm.")
     text_lines.append("\n")
 
-    ##########################################################
-    ###################### other info ########################
     text = "\n".join(text_lines)
     return text
 
-
-async def run_engine(text, voice, output_file):
+async def __run_engine(text, voice, output_file):
     communicate = edge_tts.Communicate(text, voice=voice)
     await communicate.save(output_file)
 
-def text_to_audio(text, chosen_voice = "en-US-AriaNeural"):
-
-    #chosen_voice = "en-US-AriaNeural"
-    #chosen_voice = "en-CA-ClaraNeural"
-    #chosen_voice = "en-CA-LiamNeural"
-    #chosen_voice = "en-US-ChristopherNeural"
-    #chosen_voice = "en-US-JennyNeural"
+def __text_to_audio(text, chosen_voice="en-US-AriaNeural"):
 
     current_directory = os.getcwd()
     file_path = os.path.join(current_directory, f'resources/weather_report.mp3')
 
     print("Start TTS...")
 
-    asyncio.run(run_engine(text, chosen_voice, file_path))
+    asyncio.run(__run_engine(text, chosen_voice, file_path))
 
     if os.path.exists(file_path):
         print(f"File saved successfully at {file_path}")
@@ -321,3 +304,37 @@ def text_to_audio(text, chosen_voice = "en-US-AriaNeural"):
         print("File was not saved")
 
     return file_path
+
+def generate_weather_channel(lat, long, location, voice):
+
+    start_time = time.time()
+
+    weather_data = __get_weather(lat=lat, long=long)
+    weather_text = __weather_info_to_text(weather_data, location)
+    print(weather_text)
+    file_location = __text_to_audio(weather_text, voice)
+    audio_effect(file_location)
+
+    end_time = time.time()
+    duration = end_time - start_time
+    print(f"Time taken: {duration} seconds")
+
+if __name__ == "__main__":
+
+    latitude = 48.2085
+    longitude = 16.3721
+    location_setting = "Vienna, Austria, 8th District"
+    voice_setting = "en-US-AriaNeural"
+
+    # latitude = 47.505965
+    # longitude = 9.747872
+    # location = "Bregenz, Austria, Harbour"
+    # voice = "en-CA-LiamNeural"
+
+    # chosen_voice = "en-US-AriaNeural"
+    # chosen_voice = "en-CA-ClaraNeural"
+    # chosen_voice = "en-CA-LiamNeural"
+    # chosen_voice = "en-US-ChristopherNeural"
+    # chosen_voice = "en-US-JennyNeural"
+
+    generate_weather_channel(latitude, longitude, location_setting, voice_setting)
