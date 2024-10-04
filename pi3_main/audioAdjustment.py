@@ -38,7 +38,7 @@ def __add_radio_noise(audio, base_noise_level=-19.0, harmonic_noise_level=-29.0,
 
     return noisy_audio
 
-def audio_effect(file_path):
+def audio_effect(file_path, name):
 
     audio = AudioSegment.from_mp3(file_path)
     print("Apply eq ...")
@@ -50,5 +50,5 @@ def audio_effect(file_path):
 
     # Export processed audio with effects
     current_directory = os.getcwd()
-    output_path = os.path.join(current_directory, f'resources/weather_report_with_radio_effects.mp3')
+    output_path = os.path.join(current_directory, f'resources/{name}.mp3')
     audio.export(output_path, format="mp3")

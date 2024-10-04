@@ -141,8 +141,15 @@ def __weather_info_to_text(data, location_name):
     current_wind_gusts_10m = current_weather['wind_gusts_10m']
     current_wind_direction_10m = current_weather['wind_direction_10m']
 
+    now = datetime.datetime.now()
+    current_date_time = now.strftime("%d %B %Y %H:%M")
+    current_date = now.strftime("%d %B %Y")
+
+    tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
+    tomorrow_date = tomorrow.strftime("%d %B %Y")
+
     # Current weather text
-    text_lines = [f"Current conditions in {location_name}:"]
+    text_lines = [f"Current conditions in {location_name}, at {current_date_time}:"]
     day_night_value = "Daytime" if current_is_day == 1 else "Nighttime"
     text_lines.append(f"It is currently {day_night_value}.")
     text_lines.append(f"The weather is {__weather_code_to_text(current_weather_code)}.")
@@ -177,7 +184,7 @@ def __weather_info_to_text(data, location_name):
     daily_wind_gusts_10m_max = daily_weather['wind_gusts_10m_max']
     daily_wind_direction_10m_dominant = daily_weather['wind_direction_10m_dominant']
 
-    text_lines.append(f"Today's Weather forecast for {location_name}:")
+    text_lines.append(f"Today's the {current_date} Weather forecast for {location_name}:")
     text_lines.append(f"The weather will be {__weather_code_to_text(daily_weather_code[0])}.")
 
     text_lines.append(__generate_sun_text(daily_sunrise[0], daily_sunset[0]))
@@ -227,7 +234,7 @@ def __weather_info_to_text(data, location_name):
         text_lines.append(f"The total snowfall is expected to be {daily_snowfall_sum[0]} mm.")
     text_lines.append("")
 
-    text_lines.append(f"Tomorrow's Weather forecast for {location_name}:")
+    text_lines.append(f"Tomorrow's the {tomorrow_date} Weather forecast for {location_name}:")
     text_lines.append(f"The weather will be {__weather_code_to_text(daily_weather_code[1])}.")
 
     # Use the sunrise and sunset for tomorrow (index 1)
@@ -289,10 +296,10 @@ async def __run_engine(text, voice, output_file):
     communicate = edge_tts.Communicate(text, voice=voice)
     await communicate.save(output_file)
 
-def __text_to_audio(text, chosen_voice="en-US-AriaNeural"):
+def __text_to_audio(text, name, chosen_voice):
 
     current_directory = os.getcwd()
-    file_path = os.path.join(current_directory, f'resources/weather_report.mp3')
+    file_path = os.path.join(current_directory, f'resources/{name}Unfinished.mp3')
 
     print("Start TTS...")
 
@@ -305,15 +312,15 @@ def __text_to_audio(text, chosen_voice="en-US-AriaNeural"):
 
     return file_path
 
-def generate_weather_channel(lat, long, location, voice):
+def generate_weather_channel(lat, long, location, channel_name, voice="en-US-AriaNeural"):
 
     start_time = time.time()
 
     weather_data = __get_weather(lat=lat, long=long)
     weather_text = __weather_info_to_text(weather_data, location)
     print(weather_text)
-    file_location = __text_to_audio(weather_text, voice)
-    audio_effect(file_location)
+    file_location = __text_to_audio(weather_text, channel_name, voice)
+    audio_effect(file_location, channel_name)
 
     end_time = time.time()
     duration = end_time - start_time
@@ -325,6 +332,7 @@ if __name__ == "__main__":
     longitude = 16.3721
     location_setting = "Vienna, Austria, 8th District"
     voice_setting = "en-US-AriaNeural"
+    name = "ViennaWeather"
 
     # latitude = 47.505965
     # longitude = 9.747872
@@ -337,4 +345,4 @@ if __name__ == "__main__":
     # chosen_voice = "en-US-ChristopherNeural"
     # chosen_voice = "en-US-JennyNeural"
 
-    generate_weather_channel(latitude, longitude, location_setting, voice_setting)
+    generate_weather_channel(latitude, longitude, location_setting, name, voice_setting)

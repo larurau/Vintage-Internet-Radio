@@ -134,6 +134,17 @@ CHANNEL_LIST = [
         "stream_url": "https://radio.weatherusa.net/NWR/KIG86.mp3"
     },
     {
+        "perfect_range": 20,
+        "perception_range": 100,
+        "name": "ViennaWeather",
+        "color": "(231,195,235)",
+        "stream_url": "",
+        "stream_type": "weatherstation",
+        "latitude": "48.2085",
+        "longitude": "16.3721",
+        "locationName": "Vienna, Austria, 8th District",
+    },
+    {
         "perfect_range": 40,
         "perception_range": 400,
         "name": "Rain",
