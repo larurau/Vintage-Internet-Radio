@@ -27,6 +27,11 @@ Adjust the volume of your sound device by typing
 alsamixer
 ```
 
+Install requirements for text to speech
+```
+sudo apt update && sudo apt install espeak ffmpeg libespeak1
+```
+
 ## Further Configuration
 
 ### Configure ALSA to support multiple audio inputs
@@ -181,6 +186,12 @@ import usb.util
 Pyusb has to be installed
 ```
 sudo pip3 install pyusb
+```
+
+Further 
+```
+pip3 install python-mpd2
+
 ```
 
 # Automatic startup
